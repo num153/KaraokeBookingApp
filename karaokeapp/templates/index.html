@@ -12,11 +12,11 @@
             </div>
             <div class="stat-card">
                 <h3>Phòng trống</h3>
-                <div class="value">7</div>
+                <div class="value text-success">7</div>
             </div>
             <div class="stat-card">
                 <h3>Đang sử dụng</h3>
-                <div class="value">4</div>
+                <div class="value text-danger">4</div>
             </div>
             <div class="stat-card">
                 <h3>Doanh thu hôm nay</h3>
@@ -28,7 +28,11 @@
             <div class="rooms-section">
                 <div class="section-header">
                     <h2>Sơ đồ phòng</h2>
-                    <button class="btn btn-primary" onclick="openBookingModal()">+ Đặt phòng mới</button>
+<!--                        <button class="btn btn-primary" onclick="openBookingModal()">Tìm kiếm</button>-->
+                    <form class="d-flex gap-2" role="search">
+                        <input class="form-control form-control-sm" type="search" placeholder="Tìm kiếm phòng" aria-label="Search" style="width: 180px;">
+                        <button class="btn btn-primary btn-sm" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
                 </div>
                 <div class="rooms-grid">
                     <div class="room-card available" onclick="selectRoom(1)">
@@ -90,10 +94,10 @@
             <div class="sidebar">
                 <div class="quick-actions">
                     <h3>Thao tác nhanh</h3>
-                    <button class="action-btn" onclick="openBookingModal()">Đặt phòng</button>
-                    <button class="action-btn" onclick="openServiceModal()">Thêm dịch vụ</button>
-                    <button class="action-btn" onclick="openPaymentModal()">Thanh toán</button>
-                    <button class="action-btn" onclick="openReportModal()">Xem báo cáo</button>
+                    <button class="action-btn" onclick="openBookingModal()"><i class="fa-solid fa-calendar me-2"></i>Đặt phòng</button>
+                    <button class="action-btn" onclick="openServiceModal()"><i class="fa-solid fa-bell-concierge me-2"></i>Thêm dịch vụ</button>
+                    <button class="action-btn" onclick="openPaymentModal()"><i class="fa-solid fa-dollar-sign me-2"></i></i>Thanh toán</button>
+                    <button class="action-btn" onclick="openReportModal()"><i class="fa-solid fa-chart-area me-2"></i>Xem báo cáo</button>
                 </div>
 
                 <div class="recent-bookings">
