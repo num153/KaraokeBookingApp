@@ -1,13 +1,117 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
-    <script src="{{url_for('static', filename='js/script.js')}}"></script>
-    <title>Home Page</title>
-</head>
-<body>
-<h1>Chào mừng các bạn</h1>
-</body>
-</html>
+{% extends 'layout/base.html' %}
+{% block title %}Trang chủ{% endblock %}
+
+{% block content %}
+
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Tổng phòng</h3>
+                <div class="value">12</div>
+            </div>
+            <div class="stat-card">
+                <h3>Phòng trống</h3>
+                <div class="value">7</div>
+            </div>
+            <div class="stat-card">
+                <h3>Đang sử dụng</h3>
+                <div class="value">4</div>
+            </div>
+            <div class="stat-card">
+                <h3>Doanh thu hôm nay</h3>
+                <div class="value">3.2M</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="rooms-section">
+                <div class="section-header">
+                    <h2>Sơ đồ phòng</h2>
+                    <button class="btn btn-primary" onclick="openBookingModal()">+ Đặt phòng mới</button>
+                </div>
+                <div class="rooms-grid">
+                    <div class="room-card available" onclick="selectRoom(1)">
+                        <div class="room-number">P01</div>
+                        <div class="room-status">Trống</div>
+                    </div>
+                    <div class="room-card occupied" onclick="selectRoom(2)">
+                        <div class="room-number">P02</div>
+                        <div class="room-status">Đang sử dụng</div>
+                        <div class="room-time">Bắt đầu: 14:30</div>
+                    </div>
+                    <div class="room-card available" onclick="selectRoom(3)">
+                        <div class="room-number">P03</div>
+                        <div class="room-status">Trống</div>
+                    </div>
+                    <div class="room-card occupied" onclick="selectRoom(4)">
+                        <div class="room-number">P04</div>
+                        <div class="room-status">Đang sử dụng</div>
+                        <div class="room-time">Bắt đầu: 15:00</div>
+                    </div>
+                    <div class="room-card available" onclick="selectRoom(5)">
+                        <div class="room-number">P05</div>
+                        <div class="room-status">Trống</div>
+                    </div>
+                    <div class="room-card reserved" onclick="selectRoom(6)">
+                        <div class="room-number">P06</div>
+                        <div class="room-status">Đã đặt</div>
+                        <div class="room-time">18:00 - 20:00</div>
+                    </div>
+                    <div class="room-card available" onclick="selectRoom(7)">
+                        <div class="room-number">P07</div>
+                        <div class="room-status">Trống</div>
+                    </div>
+                    <div class="room-card occupied" onclick="selectRoom(8)">
+                        <div class="room-number">P08</div>
+                        <div class="room-status">Đang sử dụng</div>
+                        <div class="room-time">Bắt đầu: 13:45</div>
+                    </div>
+                    <div class="room-card available" onclick="selectRoom(9)">
+                        <div class="room-number">P09</div>
+                        <div class="room-status">Trống</div>
+                    </div>
+                    <div class="room-card available" onclick="selectRoom(10)">
+                        <div class="room-number">P10</div>
+                        <div class="room-status">Trống</div>
+                    </div>
+                    <div class="room-card occupied" onclick="selectRoom(11)">
+                        <div class="room-number">P11</div>
+                        <div class="room-status">Đang sử dụng</div>
+                        <div class="room-time">Bắt đầu: 16:20</div>
+                    </div>
+                    <div class="room-card available" onclick="selectRoom(12)">
+                        <div class="room-number">P12</div>
+                        <div class="room-status">Trống</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="quick-actions">
+                    <h3>Thao tác nhanh</h3>
+                    <button class="action-btn" onclick="openBookingModal()">Đặt phòng</button>
+                    <button class="action-btn" onclick="openServiceModal()">Thêm dịch vụ</button>
+                    <button class="action-btn" onclick="openPaymentModal()">Thanh toán</button>
+                    <button class="action-btn" onclick="openReportModal()">Xem báo cáo</button>
+                </div>
+
+                <div class="recent-bookings">
+                    <h3>Đặt phòng gần đây</h3>
+                    <div class="booking-item">
+                        <strong>Nguyễn Văn A</strong>
+                        <small>Phòng 06 - 18:00 hôm nay</small>
+                    </div>
+                    <div class="booking-item">
+                        <strong>Trần Thị B</strong>
+                        <small>Phòng 03 - 19:30 hôm nay</small>
+                    </div>
+                    <div class="booking-item">
+                        <strong>Lê Văn C</strong>
+                        <small>Phòng 07 - 20:00 hôm nay</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
