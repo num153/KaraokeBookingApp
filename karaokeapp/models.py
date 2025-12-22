@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, Numeric, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
-from karaokeapp import db
+from karaokeapp import db, app
 
 
 # 1. Bảng Vai trò người dùng (roles)
@@ -180,4 +180,5 @@ class BillDetail(db.Model):
         return f'<BillDetail Bill:{self.bill_id} Service:{self.service_id}>'
 
 if __name__ == '__main__':
-    db.create_all()
+    with app.app_context():
+        db.create_all()
