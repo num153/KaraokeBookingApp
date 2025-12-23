@@ -8,14 +8,10 @@ from datetime import datetime, timedelta
 
 def create_sample_data():
 
-    print("Đang tạo database và tables...")
     with app.app_context():
         # Xóa tất cả tables cũ và tạo mới
         db.drop_all()
         db.create_all()
-
-        print("✓ Đã tạo tables thành công!")
-
         # 1. Tạo Roles
         print("\n1. Đang tạo Roles...")
         roles = [
@@ -52,18 +48,18 @@ def create_sample_data():
         # 4. Tạo Rooms (12 phòng)
         print("\n4. Đang tạo Rooms...")
         rooms = [
-            Room(id=1, name='P01', capacity=10, price_per_hour=150000, status_id=1),
-            Room(id=2, name='P02', capacity=10, price_per_hour=150000, status_id=2),
-            Room(id=3, name='P03', capacity=10, price_per_hour=150000, status_id=1),
+            Room(id=1, name='P01', capacity=15, price_per_hour=150000, status_id=1),
+            Room(id=2, name='P02', capacity=15, price_per_hour=150000, status_id=2),
+            Room(id=3, name='P03', capacity=15, price_per_hour=150000, status_id=1),
             Room(id=4, name='P04', capacity=15, price_per_hour=200000, status_id=2),
-            Room(id=5, name='P05', capacity=10, price_per_hour=150000, status_id=1),
+            Room(id=5, name='P05', capacity=15, price_per_hour=150000, status_id=1),
             Room(id=6, name='P06', capacity=15, price_per_hour=200000, status_id=3),
-            Room(id=7, name='P07', capacity=10, price_per_hour=150000, status_id=1),
+            Room(id=7, name='P07', capacity=15, price_per_hour=150000, status_id=1),
             Room(id=8, name='P08', capacity=15, price_per_hour=200000, status_id=2),
-            Room(id=9, name='P09', capacity=10, price_per_hour=150000, status_id=1),
-            Room(id=10, name='P10', capacity=10, price_per_hour=150000, status_id=1),
+            Room(id=9, name='P09', capacity=15, price_per_hour=150000, status_id=1),
+            Room(id=10, name='P10', capacity=15, price_per_hour=150000, status_id=1),
             Room(id=11, name='P11', capacity=15, price_per_hour=200000, status_id=2),
-            Room(id=12, name='P12', capacity=10, price_per_hour=150000, status_id=1)
+            Room(id=12, name='P12', capacity=15, price_per_hour=150000, status_id=1)
         ]
         db.session.add_all(rooms)
         db.session.commit()
