@@ -1,0 +1,309 @@
+{% extends 'layout/base.html' %}
+{% block title %}Đặt phòng{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Form đặt phòng -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fa-solid fa-calendar-plus me-2"></i>
+                        Đặt phòng hát Karaoke
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('booking') }}" id="bookingForm">
+                        <!-- Thông tin khách hàng -->
+                        <div class="mb-4">
+                            <h5 class="text-primary mb-3">
+                                <i class="fa-solid fa-user me-2"></i>
+                                Thông tin khách hàng
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">
+                                        Họ và tên <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="customer_name" 
+                                           id="customer_name"
+                                           placeholder="Nhập họ tên khách hàng"
+                                           required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">
+                                        Số điện thoại <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="tel" 
+                                           class="form-control" 
+                                           name="customer_phone" 
+                                           id="customer_phone"
+                                           placeholder="Nhập số điện thoại"
+                                           pattern="[0-9]{10,11}"
+                                           required>
+                                    <small class="text-muted">Nhập 10-11 số</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Thông tin đặt phòng -->
+                        <div class="mb-4">
+                            <h5 class="text-primary mb-3">
+                                <i class="fa-solid fa-door-open me-2"></i>
+                                Thông tin đặt phòng
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">
+                                        Chọn phòng <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" 
+                                            name="room_id" 
+                                            id="room_id" 
+                                            required>
+                                        <option value="">-- Chọn phòng --</option>
+                                        {% for room in rooms %}
+                                        <option value="{{ room.id }}" 
+                                                data-capacity="{{ room.capacity }}"
+                                                data-price="{{ room.price_per_hour }}">
+                                            {{ room.name }} - 
+                                            Sức chứa: {{ room.capacity }} người - 
+                                            {{ "{:,.0f}".format(room.price_per_hour) }}đ/giờ
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">
+                                        Số người <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           name="num_people" 
+                                           id="num_people"
+                                           placeholder="Nhập số người"
+                                           min="1"
+                                           max="15"
+                                           required disabled>
+                                    <small class="text-muted" id="capacityWarning"></small>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">
+                                        Giờ bắt đầu <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="datetime-local" 
+                                           class="form-control" 
+                                           name="start_time" 
+                                           id="start_time"
+                                           required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">
+                                        Dự kiến thời gian hát
+                                    </label>
+                                    <select class="form-select" name="duration" id="duration">
+                                        <option value="1">1 giờ</option>
+                                        <option value="2" selected>2 giờ</option>
+                                        <option value="3">3 giờ</option>
+                                        <option value="4">4 giờ</option>
+                                        <option value="5">5 giờ</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Ghi chú -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fa-solid fa-note-sticky me-2"></i>
+                                Ghi chú
+                            </label>
+                            <textarea class="form-control" 
+                                      name="notes" 
+                                      rows="3" 
+                                      placeholder="Yêu cầu đặc biệt (nếu có)..."></textarea>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg flex-fill">
+                                <i class="fa-solid fa-check me-2"></i>
+                                Xác nhận đặt phòng
+                            </button>
+                            <a href="/" class="btn btn-outline-secondary btn-lg">
+                                <i class="fa-solid fa-times me-2"></i>
+                                Hủy bỏ
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar - Thông tin hỗ trợ -->
+        <div class="col-lg-4">
+            <!-- Hướng dẫn -->
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fa-solid fa-circle-info me-2"></i>
+                        Hướng dẫn đặt phòng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ol class="ps-3">
+                        <li class="mb-2">Điền đầy đủ thông tin khách hàng</li>
+                        <li class="mb-2">Chọn phòng còn trống phù hợp</li>
+                        <li class="mb-2">Nhập số người (không vượt quá sức chứa)</li>
+                        <li class="mb-2">Chọn giờ bắt đầu và thời gian dự kiến</li>
+                        <li class="mb-2">Nhấn "Xác nhận đặt phòng"</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Chính sách -->
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fa-solid fa-file-contract me-2"></i>
+                        Chính sách đặt phòng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fa-solid fa-check-circle text-success me-2"></i>
+                            Giá phòng tính theo giờ
+                        </li>
+                        <li class="mb-2">
+                            <i class="fa-solid fa-check-circle text-success me-2"></i>
+                            Tối đa 15 người/phòng
+                        </li>
+                        <li class="mb-2">
+                            <i class="fa-solid fa-check-circle text-success me-2"></i>
+                            Khách hàng thân thiết giảm 5%
+                        </li>
+                        <li class="mb-2">
+                            <i class="fa-solid fa-check-circle text-success me-2"></i>
+                            Miễn phí nước suối
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Liên hệ -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fa-solid fa-headset me-2"></i>
+                        Cần hỗ trợ?
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p><i class="fa-solid fa-phone me-2 text-success"></i> <strong>Hotline:</strong>0977 501 923</p>
+                    <p><i class="fa-solid fa-envelope me-2 text-success"></i> <strong>Email:</strong> support@karaou.vn</p>
+                    <p class="mb-0"><i class="fa-solid fa-clock me-2 text-success"></i> <strong>24/7</strong> hỗ trợ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript validation -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roomSelect = document.getElementById('room_id');
+        const numPeopleInput = document.getElementById('num_people');
+        const capacityWarning = document.getElementById('capacityWarning');
+        const startTimeInput = document.getElementById('start_time');
+        
+        // Set minimum datetime to now
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        startTimeInput.min = now.toISOString().slice(0, 16);
+        
+        // Validate số người theo sức chứa phòng
+        roomSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const capacity = selectedOption.getAttribute('data-capacity');
+
+            if (capacity && capacity !== 'null') {
+            numPeopleInput.disabled = false;
+            } else {
+            numPeopleInput.disabled = true;
+            }
+
+            if (capacity) {
+                numPeopleInput.max = capacity;
+                capacityWarning.textContent = `Sức chứa tối đa: ${capacity} người`;
+                capacityWarning.classList.add('text-info');
+            }
+        });
+        
+        numPeopleInput.addEventListener('input', function() {
+            const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+            const capacity = parseInt(selectedOption.getAttribute('data-capacity'));
+            const numPeople = parseInt(this.value);
+            
+            if (numPeople > capacity) {
+                capacityWarning.textContent = `Vượt quá sức chứa! Tối đa ${capacity} người`;
+                capacityWarning.classList.remove('text-info');
+                capacityWarning.classList.add('text-danger');
+                this.setCustomValidity('Số người vượt quá sức chứa phòng');
+            } else {
+                capacityWarning.textContent = `Sức chứa tối đa: ${capacity} người`;
+                capacityWarning.classList.remove('text-danger');
+                capacityWarning.classList.add('text-info');
+                this.setCustomValidity('');
+            }
+        });
+        
+        // Form validation
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            if (!this.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            this.classList.add('was-validated');
+        });
+    });
+</script>
+
+<style>
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    .bg-primary{
+        background-color: #1052a5 !important;
+    }
+    .text-primary {
+    color: #1052a5 !important;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+</style>
+{% endblock %}
