@@ -27,33 +27,7 @@ def home():
                            rooms=rooms,
                            stats=stats,
                            recent_bookings=recent_bookings)
-# # ==================== ĐẶT PHÒNG ====================
-# @app.route('/booking', methods=['GET', 'POST'])
-# def booking():
-#     if request.method == 'POST':
-#         # Xử lý form đặt phòng
-#         customer_name = request.form.get('customer_name')
-#         customer_phone = request.form.get('customer_phone')
-#         room_id = request.form.get('room_id')
-#         num_people = request.form.get('num_people')
-#         start_time = request.form.get('start_time')
-#         notes = request.form.get('notes')
-#
-#         # TODO: Xử lý logic đặt phòng (sẽ code sau)
-#         # - Kiểm tra số người <= capacity
-#         # - Kiểm tra phòng còn trống
-#         # - Tạo Bill mới
-#         # - Cập nhật trạng thái phòng
-#
-#         return redirect(url_for('home'))
-#
-#     # GET request - Hiển thị form
-#     available_rooms = Room.query.join(RoomStatus) \
-#         .filter(RoomStatus.name == 'Available') \
-#         .order_by(Room.name) \
-#         .all()
-#
-#     return render_template('booking.html', rooms=available_rooms)
+
 # ==================== ĐẶT PHÒNG ====================
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
@@ -95,8 +69,7 @@ def booking():
 
             # Xác định trạng thái phòng
             time_diff = (start_time - datetime.now()).total_seconds() / 60
-            new_status_id = 2 if time_diff <= 30 else 3  # Occupied or Booked
-
+            new_status_id = 2 if time_diff <= 30 else 3 #nếu bé hơn 30 phút mới tính là đang sử dụng
             # Tạo bill
             dao.create_bill(
                 customer_id=customer.id,
@@ -106,8 +79,8 @@ def booking():
                 status_id=1  # Unpaid
             )
 
-            # Cập nhật trạng thái phòng
             dao.update_room_status(room_id, new_status_id)
+            db.session.commit()
 
             status_text = "đang sử dụng" if new_status_id == 2 else "đã đặt"
             flash(f'✓ Đặt phòng {room.name} thành công! ({status_text})', 'success')
@@ -118,11 +91,9 @@ def booking():
             db.session.rollback()
             flash(f'Có lỗi xảy ra: {str(e)}', 'danger')
             return redirect(url_for('booking'))
-
     # GET - Hiển thị form
     available_rooms = dao.get_available_rooms()
     return render_template('booking.html', rooms=available_rooms)
-
 
 # ==================== QUẢN LÝ DỊCH VỤ ====================
 @app.route('/services')

@@ -1,3 +1,6 @@
+"""
+Data Access Object (DAO) - Quản lý tất cả truy vấn database
+"""
 from datetime import datetime, date
 from sqlalchemy import func
 from karaokeapp import db
@@ -7,7 +10,7 @@ from karaokeapp.models import (
 )
 
 
-# ==================== ROOM ====================
+# ==================== ROOM DAO ====================
 
 def get_all_rooms():
     """Lấy tất cả phòng"""
@@ -38,7 +41,7 @@ def update_room_status(room_id, status_id):
     if room:
         room.status_id = status_id
         db.session.commit()
-        return Truec
+        return True
     return False
 
 
@@ -84,7 +87,7 @@ def create_customer(full_name, phone):
         monthly_visits=0
     )
     db.session.add(customer)
-    db.session.commit()  # Để lấy ID ngay
+    db.session.commit()  # ✅ Commit để lưu vào DB
     return customer
 
 
