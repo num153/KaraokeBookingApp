@@ -87,7 +87,7 @@ def create_customer(full_name, phone):
         monthly_visits=0
     )
     db.session.add(customer)
-    db.session.commit()  # ✅ Commit để lưu vào DB
+    db.session.commit()
     return customer
 
 
@@ -155,42 +155,103 @@ def update_bill_end_time(bill_id, end_time):
         return True
     return False
 
+# ==================== BILL CALCULATION ====================
+def calculate_bill_info(bill_id):
+    """Tính toán đầy đủ thông tin bill (dùng chung cho nhiều chỗ)"""
+    from decimal import Decimal
+
+    bill = Bill.query.get(bill_id)
+    if not bill:
+        return None
+
+    now = datetime.now()
+
+    # Tính thời gian đã sử dụng
+    time_used_seconds = (now - bill.start_time).total_seconds()
+    time_used = Decimal(str(time_used_seconds / 3600))  # giờ
+
+    # Tính tiền phòng
+    room_price = Decimal(str(bill.room.price_per_hour)) * time_used
+
+    # Tính tiền dịch vụ
+    service_total = db.session.query(func.sum(BillDetail.quantity * BillDetail.price_at_order)) \
+                        .filter(BillDetail.bill_id == bill_id) \
+                        .scalar() or Decimal('0')
+
+    # Tổng trước giảm giá
+    subtotal = room_price + Decimal(str(service_total))
+
+    # Kiểm tra giảm giá
+    discount = Decimal('0')
+    discount_policy = None
+    if bill.customer and bill.customer.monthly_visits >= 10:
+        discount_policy = check_customer_discount_eligibility(bill.customer.id)
+        if discount_policy:
+            discount_percent = Decimal(str(discount_policy.discount_percent)) / Decimal('100')
+            discount = subtotal * discount_percent
+
+    # Tổng tiền
+    total = subtotal - discount
+
+    # Kiểm tra hết giờ (mặc định 2 giờ)
+    expected_duration = Decimal('2.0')
+    is_overtime = time_used > expected_duration
+
+    return {
+        'bill': bill,
+        'time_used': float(time_used),
+        'time_used_decimal': time_used,
+        'is_overtime': is_overtime,
+        'room_price': room_price,
+        'service_total': service_total,
+        'subtotal': subtotal,
+        'discount': discount,
+        'discount_policy': discount_policy,
+        'total': total
+    }
+
 
 def calculate_bill_total(bill_id):
-    """Tính tổng tiền hóa đơn"""
+    """Tính tổng tiền hóa đơn (dùng khi thanh toán)"""
+    from decimal import Decimal
+
     bill = Bill.query.get(bill_id)
     if not bill:
         return 0
 
     # Tính tiền phòng
     if bill.end_time:
-        hours = (bill.end_time - bill.start_time).total_seconds() / 3600
-        room_price = bill.room.price_per_hour * hours
+        hours_seconds = (bill.end_time - bill.start_time).total_seconds()
+        hours = Decimal(str(hours_seconds / 3600))
+        room_price = Decimal(str(bill.room.price_per_hour)) * hours
     else:
-        room_price = 0
+        room_price = Decimal('0')
 
     # Tính tiền dịch vụ
-    service_price = db.session.query(func.sum(BillDetail.quantity * BillDetail.price_at_order)) \
-                        .filter(BillDetail.bill_id == bill_id) \
-                        .scalar() or 0
+    service_price_query = db.session.query(func.sum(BillDetail.quantity * BillDetail.price_at_order)) \
+        .filter(BillDetail.bill_id == bill_id) \
+        .scalar()
+
+    service_price = Decimal(str(service_price_query)) if service_price_query else Decimal('0')
 
     # Tổng trước giảm giá
     subtotal = room_price + service_price
 
     # Áp dụng giảm giá nếu có
-    discount = 0
+    discount = Decimal('0')
     if bill.policy_id:
         policy = DiscountPolicy.query.get(bill.policy_id)
         if policy and policy.is_active:
-            discount = subtotal * (policy.discount_percent / 100)
+            discount_percent = Decimal(str(policy.discount_percent)) / Decimal('100')
+            discount = subtotal * discount_percent
 
     total = subtotal - discount
 
     # Cập nhật vào database
-    bill.total_amount = total
+    bill.total_amount = float(total)
     db.session.commit()
 
-    return total
+    return float(total)
 
 
 # ==================== SERVICE DAO ====================

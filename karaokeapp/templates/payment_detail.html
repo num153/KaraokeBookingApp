@@ -1,0 +1,236 @@
+{% extends 'layout/base.html' %}
+{% block title %}Chi tiết hóa đơn - {{ bill.room.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="row">
+        <!-- Hóa đơn -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fa-solid fa-file-invoice me-2"></i>
+                        Hóa đơn - Phòng {{ bill.room.name }}
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Thông tin khách hàng -->
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">
+                            <i class="fa-solid fa-user me-2"></i>Thông tin khách hàng
+                        </h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <p><strong>Họ tên:</strong> {{ bill.customer.full_name }}</p>
+                                <p><strong>SĐT:</strong> {{ bill.customer.phone }}</p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Lượt đến:</strong> {{ bill.customer.monthly_visits }} lần</p>
+                                {% if bill.customer.monthly_visits >= 10 %}
+                                    <span class="badge bg-warning">
+                                        <i class="fa-solid fa-crown me-1"></i>Khách hàng thân thiết
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Thông tin phòng -->
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">
+                            <i class="fa-solid fa-door-open me-2"></i>Thông tin phòng
+                        </h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <p><strong>Phòng:</strong> {{ bill.room.name }}</p>
+                                <p><strong>Giá:</strong> {{ "{:,.0f}".format(bill.room.price_per_hour) }}đ/giờ</p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Bắt đầu:</strong> {{ bill.start_time.strftime('%d/%m/%Y %H:%M') }}</p>
+                                <p><strong>Thời gian hát:</strong> {{ "%.2f"|format(time_used) }} giờ</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Chi tiết dịch vụ -->
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">
+                            <i class="fa-solid fa-utensils me-2"></i>Dịch vụ đã sử dụng
+                        </h5>
+                        {% if bill_details %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Tên dịch vụ</th>
+                                            <th class="text-center">ĐVT</th>
+                                            <th class="text-center">SL</th>
+                                            <th class="text-end">Đơn giá</th>
+                                            <th class="text-end">Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for detail in bill_details %}
+                                        <tr>
+                                            <td>{{ detail.service.name }}</td>
+                                            <td class="text-center">{{ detail.service.unit }}</td>
+                                            <td class="text-center">{{ detail.quantity }}</td>
+                                            <td class="text-end">{{ "{:,.0f}".format(detail.price_at_order) }}đ</td>
+                                            <td class="text-end fw-bold">
+                                                {{ "{:,.0f}".format(detail.quantity * detail.price_at_order) }}đ
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted text-center py-3">Chưa sử dụng dịch vụ nào</p>
+                        {% endif %}
+                    </div>
+
+                    <hr>
+
+                    <!-- Tổng kết -->
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">
+                            <i class="fa-solid fa-calculator me-2"></i>Tổng kết
+                        </h5>
+                        <div class="row">
+                            <div class="col-7">
+                                <p>Tiền phòng ({{ "%.2f"|format(time_used) }} giờ x {{ "{:,.0f}".format(bill.room.price_per_hour) }}đ):</p>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p>{{ "{:,.0f}".format(room_price) }}đ</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-7">
+                                <p>Tiền dịch vụ:</p>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p>{{ "{:,.0f}".format(service_total) }}đ</p>
+                            </div>
+                        </div>
+                        {% if discount > 0 %}
+                        <div class="row text-success">
+                            <div class="col-7">
+                                <p>Giảm giá ({{ discount_policy.name }} - {{ discount_policy.discount_percent }}%):</p>
+                            </div>
+                            <div class="col-5 text-end">
+                                <p>-{{ "{:,.0f}".format(discount) }}đ</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <hr class="my-3">
+                        <div class="row">
+                            <div class="col-7">
+                                <h4>TỔNG CỘNG:</h4>
+                            </div>
+                            <div class="col-5 text-end">
+                                <h4 class="text-primary">{{ "{:,.0f}".format(total) }}đ</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-3">
+                        <a href="{{ url_for('payment_list') }}" class="btn btn-outline-secondary flex-fill">
+                            <i class="fa-solid fa-arrow-left me-2"></i>Quay lại
+                        </a>
+                        <form method="POST" 
+                              action="{{ url_for('process_payment', bill_id=bill.id) }}"
+                              class="flex-fill"
+                              onsubmit="return confirm('Xác nhận thanh toán {{ "{:,.0f}".format(total) }}đ?')">
+                            <button type="submit" class="btn btn-success w-100 btn-lg">
+                                <i class="fa-solid fa-check-circle me-2"></i>
+                                Xác nhận thanh toán
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Thông tin thanh toán -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fa-solid fa-info-circle me-2"></i>Thông tin thanh toán
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Tạm tính:</span>
+                        <strong>{{ "{:,.0f}".format(room_price + service_total) }}đ</strong>
+                    </div>
+                    {% if discount > 0 %}
+                    <div class="d-flex justify-content-between mb-3 text-success">
+                        <span>Giảm giá:</span>
+                        <strong>-{{ "{:,.0f}".format(discount) }}đ</strong>
+                    </div>
+                    {% endif %}
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5>Tổng tiền:</h5>
+                        <h4 class="text-primary mb-0">{{ "{:,.0f}".format(total) }}đ</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lịch sử giao dịch -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fa-solid fa-history me-2"></i>Ghi chú
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fa-solid fa-check text-success me-2"></i>
+                            Hóa đơn được lưu tự động
+                        </li>
+                        <li class="mb-2">
+                            <i class="fa-solid fa-check text-success me-2"></i>
+                            Cập nhật điểm thành viên
+                        </li>
+                        <li class="mb-2">
+                            <i class="fa-solid fa-check text-success me-2"></i>
+                            Phòng tự động trả về trống
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        border: none;
+    }
+    
+    .card {
+        border-radius: 15px;
+    }
+    
+    .breadcrumb {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 1rem;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}

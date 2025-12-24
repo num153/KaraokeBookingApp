@@ -123,14 +123,22 @@ body {
 }
 
 .btn-primary {
-    background: #667eea;
+    background: #5568d3;
     color: white;
 }
 
 .btn-primary:hover {
     background: #5568d3;
 }
-
+.bg-second{
+    background-color: #198754;
+}
+.bg-inuse{
+    background-color: #dc3545;
+}
+.bg-primary-2{
+    background-color: ##1052a5;
+}
 .rooms-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
