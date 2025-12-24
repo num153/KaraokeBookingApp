@@ -4,6 +4,9 @@ cài biến môi trường
 cài requirement.txt
 
 =======================================
+cấu hình python với MySQL
+<img width="1259" height="422" alt="image" src="https://github.com/user-attachments/assets/8bcc884d-b7d6-4792-8703-7be43f24ec2c" />
+
 
 chạy model để tạo các bảng cho database
 <img width="1229" height="725" alt="image" src="https://github.com/user-attachments/assets/45d56499-bcd9-460e-953b-61dddd320e05" />
