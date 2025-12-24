@@ -84,15 +84,15 @@
                     <a class="nav-link" href="{{ url_for('booking') }}"><button class="action-btn" onclick="openBookingModal()">
                         <i class="fa-solid fa-calendar me-2"></i>Đặt phòng
                     </button></a>
-                    <button class="action-btn" onclick="openServiceModal()">
+                    <a class="nav-link" href="{{ url_for('services') }}"><button class="action-btn" onclick="openServiceModal()">
                         <i class="fa-solid fa-bell-concierge me-2"></i>Thêm dịch vụ
-                    </button>
-                    <button class="action-btn" onclick="openPaymentModal()">
+                    </button></a>
+                    <a class="nav-link" href="{{ url_for('payment_list') }}"><button class="action-btn" onclick="openPaymentModal()">
                         <i class="fa-solid fa-dollar-sign me-2"></i>Thanh toán
-                    </button>
-                    <button class="action-btn" onclick="openReportModal()">
+                    </button></a>
+                    <a class="nav-link" href="{{ url_for('reports') }}"><button class="action-btn" onclick="openReportModal()">
                         <i class="fa-solid fa-chart-area me-2"></i>Xem báo cáo
-                    </button>
+                    </button></a>
                 </div>
 
                 <!-- Recent Bookings -->

@@ -3,9 +3,9 @@
         <div class="navbar-menu">
             <a href="{{ url_for('home') }}">Trang chủ</a>
             <a href="{{ url_for('booking') }}">Đặt phòng</a>
-            <a href="#services">Dịch vụ</a>
-            <a href="#payment">Thanh toán</a>
-            <a href="#reports">Báo cáo</a>
+            <a href="{{ url_for('services') }}">Dịch vụ</a>
+            <a href="{{ url_for('payment_list') }}">Thanh toán</a>
+            <a href="{{ url_for('reports') }}">Báo cáo</a>
             <div class="user-info">
                 <span>👤</span>
                 <span>Nhân viên</span>

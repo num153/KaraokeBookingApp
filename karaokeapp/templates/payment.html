@@ -1,10 +1,174 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'layout/base.html' %}
+{% block title %}Thanh toán{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<div class="container py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fa-solid fa-credit-card me-2"></i>Thanh toán</h2>
+        <div class="badge bg-inuse fs-6">
+            {{ bills_info|length }} phòng đang sử dụng
+        </div>
+    </div>
+
+    {% if bills_info %}
+        <!-- Danh sách phòng cần thanh toán -->
+        <div class="row g-4">
+            {% for info in bills_info %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <!-- Header Card -->
+                        <div class="card-header {% if info.is_overtime %}bg-danger{% else %}bg-primary{% endif %} text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0">
+                                    <i class="fa-solid fa-door-open me-2"></i>
+                                    {{ info.bill.room.name }}
+                                </h4>
+                                {% if info.is_overtime %}
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fa-solid fa-clock"></i> Hết giờ
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark">
+                                        <i class="fa-solid fa-hourglass-half"></i> Đang hát
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Body Card -->
+                        <div class="card-body">
+                            <!-- Thông tin khách hàng -->
+                            <div class="mb-3">
+                                <h6 class="text-muted mb-2">
+                                    <i class="fa-solid fa-user me-2"></i>Khách hàng
+                                </h6>
+                                <p class="mb-1 fw-bold">{{ info.bill.customer.full_name }}</p>
+                                <small class="text-muted">{{ info.bill.customer.phone }}</small>
+                                {% if info.bill.customer.monthly_visits >= 10 %}
+                                    <span class="badge bg-warning ms-2">
+                                        <i class="fa-solid fa-star"></i> Thân thiết
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <hr>
+
+                            <!-- Thời gian -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span><i class="fa-solid fa-clock me-2"></i>Bắt đầu:</span>
+                                    <strong>{{ info.bill.start_time.strftime('%H:%M') }}</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span><i class="fa-solid fa-hourglass me-2"></i>Đã hát:</span>
+                                    <strong class="{% if info.is_overtime %}text-danger{% endif %}">
+                                        {{ "%.1f"|format(info.time_used) }} giờ
+                                    </strong>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Tính tiền -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tiền phòng:</span>
+                                    <span>{{ "{:,.0f}".format(info.room_price) }}đ</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Dịch vụ:</span>
+                                    <span>{{ "{:,.0f}".format(info.service_total) }}đ</span>
+                                </div>
+                                {% if info.discount > 0 %}
+                                    <div class="d-flex justify-content-between mb-2 text-success">
+                                        <span>Giảm giá:</span>
+                                        <span>-{{ "{:,.0f}".format(info.discount) }}đ</span>
+                                    </div>
+                                {% endif %}
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="mb-0">Tổng cộng:</h5>
+                                    <h5 class="mb-0 text-primary">
+                                        {{ "{:,.0f}".format(info.total) }}đ
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Card -->
+                        <div class="card-footer bg-light border-0">
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('payment_detail', bill_id=info.bill.id) }}" 
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fa-solid fa-eye me-2"></i>Xem chi tiết
+                                </a>
+                                <form method="POST" 
+                                      action="{{ url_for('process_payment', bill_id=info.bill.id) }}"
+                                      onsubmit="return confirm('Xác nhận thanh toán phòng {{ info.bill.room.name }}?')">
+                                    <button type="submit" 
+                                            class="btn {% if info.is_overtime %}btn-danger{% else %}btn-success{% endif %} w-100">
+                                        <i class="fa-solid fa-check-circle me-2"></i>
+                                        {% if info.is_overtime %}Thanh toán ngay{% else %}Thanh toán{% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Không có phòng nào -->
+        <div class="text-center py-5">
+            <i class="fa-solid fa-inbox fa-5x text-muted mb-3"></i>
+            <h3 class="text-muted">Không có phòng nào đang sử dụng</h3>
+            <p class="text-muted">Tất cả phòng đều trống hoặc đã thanh toán</p>
+            <a href="/" class="btn btn-primary mt-3">
+                <i class="fa-solid fa-home me-2"></i>Về trang chủ
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    }
+    
+    .bg-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+    
+    .breadcrumb {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 1rem;
+        border-radius: 10px;
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        border: none;
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        border: none;
+    }
+</style>
+
+<script>
+    // Auto refresh mỗi 30s để cập nhật thời gian
+    setTimeout(function() {
+        location.reload();
+    }, 30000);
+</script>
+{% endblock %}
