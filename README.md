@@ -90,14 +90,3 @@ KaraokeBookingApp/
 - ✅ Giao diện người dùng thân thiện
 - ✅ Hệ thống quản lý database
 
-## 📝 Ghi chú
-
-Đảm bảo MySQL server đang chạy trước khi khởi động ứng dụng.
-
-## 📧 Liên hệ
-
-Dự án được quản lý bởi **num153**
-
----
-
-**Trạng thái**: Đang phát triển
