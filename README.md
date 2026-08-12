@@ -1,27 +1,103 @@
 # KaraokeBookingApp
 
-cài biến môi trường
-cài requirement.txt
+Ứng dụng đặt phòng karaoke trực tuyến - một giải pháp quản lý và đặt phòng karaoke hiệu quả.
 
-=======================================
+## 📋 Mô tả
 
-vào MySQL tạo một schema tên: karadb
+KaraokeBookingApp là một ứng dụng web được xây dựng với **Python** (Backend), **HTML/CSS** (Frontend) cho phép người dùng:
+- Duyệt danh sách phòng karaoke
+- Đặt phòng trực tuyến
+- Quản lý các đơn đặt hàng
+- Cập nhật thông tin phòng và giá cước
 
-cấu hình python với MySQL
-tên user: root
-mk: mk bạn tạo
-tên database: karadb
-<img width="1259" height="422" alt="image" src="https://github.com/user-attachments/assets/8bcc884d-b7d6-4792-8703-7be43f24ec2c" />
+## 🛠️ Công nghệ sử dụng
 
+- **Backend**: Python (Flask/Django)
+- **Frontend**: HTML, CSS
+- **Database**: MySQL
+- **Hệ thống**: Web Application
 
-chạy model để tạo các bảng cho database
-<img width="1229" height="725" alt="image" src="https://github.com/user-attachments/assets/45d56499-bcd9-460e-953b-61dddd320e05" />
+## 📦 Cài đặt
 
+### 1. Yêu cầu hệ thống
+- Python 3.x
+- MySQL Server
+- pip (Python package manager)
 
-chạy create_db.py để import data cho các bảng
-<img width="1273" height="705" alt="image" src="https://github.com/user-attachments/assets/a95dcbfb-0c1d-4a14-9255-5b123400d999" />
+### 2. Cấu hình môi trường
 
+```bash
+# Clone repository
+git clone https://github.com/num153/KaraokeBookingApp.git
+cd KaraokeBookingApp
 
-=======================================
+# Cài đặt dependencies
+pip install -r requirements.txt
 
-done
+# Cấu hình biến môi trường
+# Tạo file .env hoặc cấu hình trong ứng dụng
+```
+
+### 3. Cấu hình Database
+
+1. **Tạo schema MySQL:**
+   ```sql
+   CREATE SCHEMA karadb;
+   ```
+
+2. **Cấu hình kết nối Python với MySQL:**
+   - Tên user: `root`
+   - Mật khẩu: [mật khẩu MySQL của bạn]
+   - Database: `karadb`
+
+3. **Tạo các bảng từ models:**
+   ```bash
+   python models.py
+   ```
+
+4. **Import dữ liệu ban đầu:**
+   ```bash
+   python create_db.py
+   ```
+
+## 🚀 Chạy ứng dụng
+
+```bash
+# Khởi chạy server
+python app.py
+```
+
+Ứng dụng sẽ chạy trên `http://localhost:5000` (hoặc port khác tùy cấu hình)
+
+## 📁 Cấu trúc dự án
+
+```
+KaraokeBookingApp/
+├── app.py                 # File chính
+├── create_db.py          # Script tạo database
+├── models.py             # Định nghĩa models
+├── requirements.txt      # Dependencies
+├── templates/            # File HTML
+├── static/              # File CSS, JS, images
+└── README.md
+```
+
+## 👥 Tính năng chính
+
+- ✅ Xem danh sách phòng karaoke
+- ✅ Đặt phòng trực tuyến
+- ✅ Quản lý đơn đặt hàng
+- ✅ Giao diện người dùng thân thiện
+- ✅ Hệ thống quản lý database
+
+## 📝 Ghi chú
+
+Đảm bảo MySQL server đang chạy trước khi khởi động ứng dụng.
+
+## 📧 Liên hệ
+
+Dự án được quản lý bởi **num153**
+
+---
+
+**Trạng thái**: Đang phát triển
